@@ -5,12 +5,12 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.ksa.foody.util.NetworkResult
 import com.ksa.infilect.data.Repository
+import com.ksa.infilect.data.db.UsersEntity
 import com.ksa.infilect.models.RandomUsers
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
@@ -19,6 +19,16 @@ class MainViewModel  @ViewModelInject constructor(
 ): AndroidViewModel(application) {
 
     /** ROOM DB **/
+    val readUsers: LiveData<List<UsersEntity>> = repository.localDS.readUsersDatabase().asLiveData()
+
+    private fun insertUsers(usersEntity: UsersEntity) =
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.localDS.insertUsers(usersEntity)
+            }
+
+    fun deleteAllUsers() = viewModelScope.launch(Dispatchers.IO) {
+        repository.localDS.deleteAllUsers()
+    }
 
 
     /** RETROFIT **/
@@ -55,10 +65,13 @@ class MainViewModel  @ViewModelInject constructor(
                 return NetworkResult.Error("Timeout")
             }
             response.body()!!.results.isNullOrEmpty() -> {
-                return NetworkResult.Error("Recipe Not Found..")
+                return NetworkResult.Error("Users Not Found..")
             }
             response.isSuccessful ->{
                 val randomUsers = response.body()
+                if(randomUsers!= null){
+                    offlineCacheUsers(randomUsers)
+                }
                 return NetworkResult.Success(randomUsers!!)
             }else ->{
             return NetworkResult.Error(response.message())
@@ -66,6 +79,12 @@ class MainViewModel  @ViewModelInject constructor(
         }
 
     }
+
+    private fun offlineCacheUsers(users: RandomUsers) {
+        val usersEntity = UsersEntity(users)
+        insertUsers(usersEntity)
+    }
+
 
     private fun hasInternetConnection():Boolean{
 

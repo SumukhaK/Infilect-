@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.ksa.foody.util.NetworkResult
 import com.ksa.infilect.adapter.CardStackAdapter
@@ -18,6 +19,8 @@ import com.ksa.infilect.databinding.ActivityMainBinding
 import com.ksa.infilect.models.Result
 import com.yuyakaido.android.cardstackview.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.lang.Exception
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() , CardStackListener {
@@ -37,6 +40,12 @@ class MainActivity : AppCompatActivity() , CardStackListener {
         setupCardStackView()
         setupButton()
 
+       /* try{
+            mainViewModel.deleteAllUsers()
+        }catch (e:Exception){
+            Log.v("DeleteDbErr ",e.message!!)
+            e.printStackTrace()
+        }*/
         mainViewModel.getRandomUsers("10")
         mainViewModel.randomUsersResponse.observe(this,{response ->
             when(response){
@@ -51,7 +60,7 @@ class MainActivity : AppCompatActivity() , CardStackListener {
                 }
 
                 is NetworkResult.Error -> {
-                    //loadDataFromCache()
+                    loadDataFromCache()
                     Toast.makeText(this, response.message.toString(), Toast.LENGTH_SHORT).show()
                 }
 
@@ -152,7 +161,17 @@ class MainActivity : AppCompatActivity() , CardStackListener {
         }
     }
 
-
+    private fun loadDataFromCache(){
+        lifecycleScope.launch {
+            mainViewModel.readUsers.observe(this@MainActivity,{database ->
+                if(database.isNotEmpty()){
+                    adapter.setData(database[0].users)
+                }else{
+                    showNoData()
+                }
+            })
+        }
+    }
 
 
 
