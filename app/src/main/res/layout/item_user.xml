@@ -22,7 +22,7 @@
             android:id="@+id/item_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            loadImageFromUrl="@{userResult.picture.medium}"
+            loadImageFromUrl="@{userResult.picture.large}"
             android:scaleType="centerCrop"
             app:riv_corner_radius="8dp" />
 
@@ -54,15 +54,7 @@
 
         </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/top_overlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"></FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/bottom_overlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"></FrameLayout>
 
     </androidx.cardview.widget.CardView>
 </layout>

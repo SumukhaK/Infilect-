@@ -80,8 +80,9 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
 
-    // Image Loading library Coil
-    implementation "io.coil-kt:coil:0.13.0"
+    // Image Loading library Glide
+    implementation 'com.github.bumptech.glide:glide:4.13.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
 
     // Gson
     implementation 'com.google.code.gson:gson:2.8.6'
