@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".views.MainActivity">
+
+    <ProgressBar
+        android:id="@+id/loading_progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/noconnection_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/not_connected_to_internet"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/nodata_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_more_data_available"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/content_layout"
+        android:visibility="visible"
+        android:clipChildren="false">
+
+        <RelativeLayout
+            android:id="@+id/button_container"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="8dp"
+            android:layout_height="80dp"
+            android:layout_alignParentBottom="true"
+            android:clipChildren="false">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/skip_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/rewind_button"
+                android:layout_toStartOf="@+id/rewind_button"
+                android:src="@drawable/skip_red"
+                app:backgroundTint="@android:color/white"
+                app:fabSize="auto"
+                app:rippleColor="#22ED7563"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/rewind_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/rewind_blue"
+                android:visibility="invisible"
+                app:backgroundTint="@android:color/white"
+                app:fabSize="mini"
+                app:rippleColor="#225BC9FA"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/like_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/rewind_button"
+                android:layout_toEndOf="@+id/rewind_button"
+                android:src="@drawable/like_green"
+                app:backgroundTint="@android:color/white"
+                app:fabSize="auto"
+                app:rippleColor="#226FE2B3"/>
+
+        </RelativeLayout>
+
+        <com.yuyakaido.android.cardstackview.CardStackView
+            android:id="@+id/card_stack_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/button_container"
+            android:padding="4dp"
+            android:clipToPadding="false">
+        </com.yuyakaido.android.cardstackview.CardStackView>
+
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

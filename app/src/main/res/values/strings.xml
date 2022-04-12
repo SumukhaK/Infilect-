@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Infilect</string>
+    <string name="not_connected_to_internet">Not Connected to Internet !!..</string>
+    <string name="no_more_data_available">No More Data Available !!..</string>
+</resources>
