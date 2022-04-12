@@ -9,19 +9,25 @@ import android.view.animation.LinearInterpolator
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
+import com.ksa.foody.util.NetworkListener
 import com.ksa.foody.util.NetworkResult
 import com.ksa.infilect.adapter.CardStackAdapter
 import com.ksa.infilect.viewmodels.MainViewModel
 import com.ksa.infilect.databinding.ActivityMainBinding
 import com.ksa.infilect.models.Result
+import com.ksa.infilect.util.observeOnce
 import com.yuyakaido.android.cardstackview.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() , CardStackListener {
 
@@ -30,7 +36,7 @@ class MainActivity : AppCompatActivity() , CardStackListener {
     private val manager by lazy { CardStackLayoutManager(this, this) }
     private val adapter by lazy { CardStackAdapter() }
     private var randomUsersList = emptyList<Result>()
-    private lateinit var selectedUser : Result
+    private lateinit var networkListener: NetworkListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,12 +46,40 @@ class MainActivity : AppCompatActivity() , CardStackListener {
         setupCardStackView()
         setupButton()
 
-       /* try{
-            mainViewModel.deleteAllUsers()
-        }catch (e:Exception){
-            Log.v("DeleteDbErr ",e.message!!)
-            e.printStackTrace()
-        }*/
+        lifecycleScope.launchWhenStarted {
+            networkListener = NetworkListener()
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                networkListener.checkNetworkAvailability(this@MainActivity).collect{ status ->
+                    Log.v("NetworkListener",status.toString())
+                    mainViewModel.networkStatus = status
+                    mainViewModel.showNetworkStatus()
+                    if(status){
+                        getAllUsersFromApi()
+                    }else{
+                        readDb()
+                    }
+                }
+            }
+        }
+
+        //getAllUsersFromApi()
+    }
+
+    private fun readDb() {
+        mainViewModel.readUsers.observeOnce(this) { database ->
+            if (database.isNotEmpty()) {
+                Log.v("READDATA", "database.isNotEmpty")
+                randomUsersList = database[0].users.results
+                adapter.setData(database[0].users)
+            } else {
+                Log.v("READDATA", "database.isEmpty")
+                getAllUsersFromApi()
+            }
+        }
+    }
+
+
+    private fun getAllUsersFromApi(){
         mainViewModel.getRandomUsers("10")
         mainViewModel.randomUsersResponse.observe(this,{response ->
             when(response){
@@ -134,7 +168,8 @@ class MainActivity : AppCompatActivity() , CardStackListener {
                 .build()
             manager.setSwipeAnimationSetting(setting)
             binding.cardStackView.swipe()
-            Toast.makeText(this,"${selectedUser.name.first} been left swiped !!..",Toast.LENGTH_SHORT).show()
+
+            //Toast.makeText(this,"${selectedUser.name.first} been left swiped !!..",Toast.LENGTH_SHORT).show()
         }
 
      /*   val rewind = findViewById<View>(R.id.rewind_button)
@@ -157,7 +192,7 @@ class MainActivity : AppCompatActivity() , CardStackListener {
                 .build()
             manager.setSwipeAnimationSetting(setting)
             binding.cardStackView.swipe()
-            Toast.makeText(this,"${selectedUser.name.first} been right swiped !!..",Toast.LENGTH_SHORT).show()
+
         }
     }
 
@@ -180,10 +215,12 @@ class MainActivity : AppCompatActivity() , CardStackListener {
     }
 
     override fun onCardSwiped(direction: Direction) {
-        //Log.v("CardStackViewPosition", "onCardSwiped: p = ${manager.topPosition}, d = $direction, ${randomUsersList[manager.topPosition]} ")
-        //Log.d("CardStackViewItem", "onCardSwiped: p = ${randomUsersList[manager.topPosition]}")
+
         if (manager.topPosition == adapter.itemCount) {
             showNoData() // once all the 10 users are swiped
+        }else{
+            //selectedUser = randomUsersList[manager.topPosition-1]
+            Toast.makeText(this,"${randomUsersList[manager.topPosition-1].name.first} been $direction swiped !!..",Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -197,7 +234,7 @@ class MainActivity : AppCompatActivity() , CardStackListener {
 
     override fun onCardAppeared(view: View, position: Int) {
         //Log.v("CardStackViewPosition", "onCardAppeared: ($position) ${randomUsersList[position]}")
-        selectedUser = randomUsersList[position]
+
     }
 
     override fun onCardDisappeared(view: View, position: Int) {

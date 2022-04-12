@@ -10,5 +10,10 @@ class Constants {
         //ROOM Db
         const val DB_NAME = "randomusers_database"
         const val USERS_TABLE = "users"
+
+        // pref's
+        const val PREF_NAME = "infl_pref"
+        const val PREF_BACK_ONLINE = "backOnline"
+
     }
 }
