@@ -220,11 +220,9 @@ class MainActivity : AppCompatActivity() , CardStackListener {
 
     override fun onCardSwiped(direction: Direction) {
 
+        Toast.makeText(this,"${randomUsersList[manager.topPosition-1].name.first} been $direction swiped !!..",Toast.LENGTH_SHORT).show()
         if (manager.topPosition == adapter.itemCount) {
             showNoData() // once all the 10 users are swiped
-        }else{
-            //selectedUser = randomUsersList[manager.topPosition-1]
-            Toast.makeText(this,"${randomUsersList[manager.topPosition-1].name.first} been $direction swiped !!..",Toast.LENGTH_SHORT).show()
         }
     }
 
