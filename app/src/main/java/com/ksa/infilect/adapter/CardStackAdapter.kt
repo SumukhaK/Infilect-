@@ -12,7 +12,7 @@ import com.ksa.infilect.util.UsersDiffUtils
 class CardStackAdapter : RecyclerView.Adapter<CardStackAdapter.MyCardStackViewHolder>() {
 
     private var userList = emptyList<Result>()
-    lateinit var selectedUser: Result
+    //lateinit var selectedUser: Result
     class MyCardStackViewHolder(private val rowBinding: ItemUserBinding): RecyclerView.ViewHolder(rowBinding.root) {
 
         fun bind(result: Result){
@@ -35,7 +35,7 @@ class CardStackAdapter : RecyclerView.Adapter<CardStackAdapter.MyCardStackViewHo
 
     override fun onBindViewHolder(holder: MyCardStackViewHolder, position: Int) {
         val currentUser = userList[position]
-        selectedUser = userList[position]
+        //selectedUser = userList[position]
         holder.bind(currentUser)
     }
 
@@ -43,9 +43,6 @@ class CardStackAdapter : RecyclerView.Adapter<CardStackAdapter.MyCardStackViewHo
         return userList.size
     }
 
-    fun getItem():Result{
-        return selectedUser
-    }
 
     fun setData(newData:RandomUsers){
         val recipesDiffUtils = UsersDiffUtils(userList,newData.results)

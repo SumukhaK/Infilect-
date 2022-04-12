@@ -46,11 +46,15 @@ class MainActivity : AppCompatActivity() , CardStackListener {
         setupCardStackView()
         setupButton()
 
+        mainViewModel.readBackOnline.observe(this,{
+            mainViewModel.backOnline = it
+        })
+
         lifecycleScope.launchWhenStarted {
             networkListener = NetworkListener()
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                 networkListener.checkNetworkAvailability(this@MainActivity).collect{ status ->
-                    Log.v("NetworkListener",status.toString())
+                   // Log.v("NetworkListener",status.toString())
                     mainViewModel.networkStatus = status
                     mainViewModel.showNetworkStatus()
                     if(status){
@@ -68,11 +72,11 @@ class MainActivity : AppCompatActivity() , CardStackListener {
     private fun readDb() {
         mainViewModel.readUsers.observeOnce(this) { database ->
             if (database.isNotEmpty()) {
-                Log.v("READDATA", "database.isNotEmpty")
+                //Log.v("READDATA", "database.isNotEmpty")
                 randomUsersList = database[0].users.results
                 adapter.setData(database[0].users)
             } else {
-                Log.v("READDATA", "database.isEmpty")
+                //Log.v("READDATA", "database.isEmpty")
                 getAllUsersFromApi()
             }
         }
@@ -123,12 +127,12 @@ class MainActivity : AppCompatActivity() , CardStackListener {
         binding.nodataTextView.visibility = View.GONE
     }
 
-    private fun showNoConnection(){
-        binding.contentLayout.visibility = View.GONE
-        binding.noconnectionTextView.visibility = View.VISIBLE
-        binding.loadingProgressBar.visibility = View.GONE
-        binding.nodataTextView.visibility = View.GONE
-    }
+//    private fun showNoConnection(){
+//        binding.contentLayout.visibility = View.GONE
+//        binding.noconnectionTextView.visibility = View.VISIBLE
+//        binding.loadingProgressBar.visibility = View.GONE
+//        binding.nodataTextView.visibility = View.GONE
+//    }
 
     private fun showNoData(){
         binding.contentLayout.visibility = View.GONE
